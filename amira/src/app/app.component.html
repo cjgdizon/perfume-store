@@ -1,4 +1,9 @@
 <a class="skip" href="#main">Skip to main content</a>
+<div class="demo-banner" role="note" *ngIf="demo">
+  <span><strong>Live demo.</strong> Sample data stored in your browser only. Shop as a customer, or sign in as the owner
+    (<code>owner&#64;amira.ph</code> / <code>owner123</code>) to manage stock, orders and reports.</span>
+  <button type="button" (click)="resetDemo()">Reset demo</button>
+</div>
 <app-header></app-header>
 <main id="main" tabindex="-1">
   <router-outlet></router-outlet>

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DemoApiInterceptor } from './service/demo-api.interceptor';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
@@ -73,7 +74,11 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     ReactiveFormsModule,
     AppRoutingModule
   ],
-  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    // last in the chain: answers API calls in the browser, only in the "demo" build
+    { provide: HTTP_INTERCEPTORS, useClass: DemoApiInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

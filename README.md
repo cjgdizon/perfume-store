@@ -12,6 +12,16 @@ amira/                  Angular 16 (NgModule, like gmart/)
 docker-compose.yml      MySQL + backend + Angular (nginx), started with one command
 ```
 
+## Live demo
+
+The Angular app also has a **demo build** that needs no backend, so it can be hosted as a static site (it is
+deployed on Vercel from the `amira/` folder). Instead of calling the Spring Boot API it uses an in-browser copy of
+the API (`amira/src/app/demo/demo-backend.ts`, switched on by `environment.demo`) that follows the same stock,
+payment and order rules and keeps its data in the visitor's browser. Sign in as the owner with `owner@amira.ph` /
+`owner123`, or as a customer with `customer@amira.ph` / `customer123`. The banner at the top has a "Reset demo"
+button. Build it with `npm run build:demo` from `amira/`. The normal `npm start` and Docker builds are unchanged and
+still talk to the real backend.
+
 ## How the proposal maps to the code
 
 | Proposal | Code |
