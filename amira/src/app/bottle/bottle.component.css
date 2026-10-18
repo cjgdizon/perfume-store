@@ -1,0 +1,18 @@
+:host { display: block; }
+
+/* Every picture lives in the same 4:5 frame. The frame fixes the size, the image only fits inside it. */
+.stage { position: relative; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; }
+.stage.men { background: #f1ebe3; }
+.stage.women { background: #f6ecee; }
+.stage.uni { background: #ecefee; }
+.stage.photo { background: #fff; }
+
+/* contain: keeps the original proportions (never stretched or cropped), centred, with an even margin */
+.stage img {
+  position: absolute;
+  top: 8%; left: 8%;
+  width: 84%; height: 84%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+}

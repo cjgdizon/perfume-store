@@ -1,0 +1,70 @@
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="copy">
+      <span class="eyebrow">Locally sourced perfumes</span>
+      <h1>Find the scent that stays with you.</h1>
+      <p class="lead">AMIRA is a family perfume shop that now sells online. Browse by size, see the batch and expiry date on every bottle, and pay the way you like.</p>
+      <div class="row">
+        <a routerLink="/products" class="btn">Shop perfumes <app-icon name="arrow" [size]="16"></app-icon></a>
+        <a routerLink="/register" class="btn secondary">Create account</a>
+      </div>
+    </div>
+    <!-- decorative studio scene: real AMIRA bottles standing on plinths -->
+    <div class="scene" aria-hidden="true">
+      <div class="floor"></div>
+      <div class="plinth p1"><span class="band"></span><span class="mark">AMIRA</span></div>
+      <div class="plinth p2"></div>
+      <div class="plinth p3"></div>
+      <div class="bottle" *ngFor="let b of bottles; let i = index"
+        [style.left.%]="b.x / 10" [style.bottom.%]="(640 - b.base) / 6.4" [style.height.%]="b.h / 6.4"
+        [style.z-index]="b.z" [style.animation-delay.ms]="i * 70">
+        <img [src]="'assets/hero/' + b.file + '.png'" alt="" decoding="async">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container block">
+  <div class="row between head">
+    <div>
+      <span class="eyebrow">Available now</span>
+      <h2>Featured perfumes</h2>
+    </div>
+    <a routerLink="/products" class="link-btn">See all perfumes</a>
+  </div>
+
+  <div class="featured" *ngIf="loading" aria-busy="true" aria-label="Loading perfumes">
+    <div class="skeleton" style="height: 420px" *ngFor="let n of [1, 2, 3, 4]"></div>
+  </div>
+  <div class="notice error" role="alert" *ngIf="failed">
+    <app-icon name="alert"></app-icon>
+    <span>We could not load the perfumes. Check that the server is running, then refresh the page.</span>
+  </div>
+  <div class="featured" *ngIf="!loading && !failed && featured.length">
+    <app-product-card *ngFor="let p of featured" [product]="p"></app-product-card>
+  </div>
+  <div class="empty" *ngIf="!loading && !failed && !featured.length">
+    <h3>The collection is being prepared</h3>
+    <p>Perfumes will appear here as soon as they are listed. Please check back soon.</p>
+  </div>
+</section>
+
+<section class="values">
+  <div class="container grid cols-3">
+    <div>
+      <app-icon name="layers" [size]="28"></app-icon>
+      <h3>Every size, counted</h3>
+      <p>50ml or 100ml: each size has its own price and its own stock count, so what you see is what we have.</p>
+    </div>
+    <div>
+      <app-icon name="clock" [size]="28"></app-icon>
+      <h3>Batch and expiry shown</h3>
+      <p>Perfume ages. We show the batch and best-before month so you can buy with confidence.</p>
+    </div>
+    <div>
+      <app-icon name="truck" [size]="28"></app-icon>
+      <h3>Pay your way</h3>
+      <p>GCash, card, bank transfer or cash on delivery. Follow your order from placed to delivered.</p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,4 @@
+.filter { max-width: 240px; }
+.detail td { background: var(--bg); }
+.d { display: grid; gap: 12px; padding: 8px 0; }
+.d p { margin: 0; }

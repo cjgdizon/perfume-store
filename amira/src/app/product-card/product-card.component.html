@@ -1,0 +1,11 @@
+<a class="card-link" [routerLink]="['/products', product.id]">
+  <app-bottle [category]="product.category" [label]="product.name" [imageUrl]="product.imageUrl"></app-bottle>
+  <div class="body">
+    <span class="eyebrow">{{ product.brand }}</span>
+    <h3>{{ product.name }}</h3>
+    <p class="small muted cat">{{ product.category }}<ng-container *ngIf="sizes"> · {{ sizes }}</ng-container></p>
+    <p class="price num" *ngIf="from !== null; else gone">From {{ from | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p>
+    <ng-template #gone><p class="price"><app-status status="Unavailable"></app-status></p></ng-template>
+    <p *ngIf="lowOnly" class="small"><app-status status="LowStock"></app-status></p>
+  </div>
+</a>

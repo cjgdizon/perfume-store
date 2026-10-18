@@ -1,0 +1,52 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Almost there</span>
+    <h1>Checkout</h1>
+  </div>
+
+  <div class="layout">
+    <form [formGroup]="form" (ngSubmit)="place()" novalidate class="stack">
+      <div class="notice error" role="alert" *ngIf="error" id="form-error">
+        <app-icon name="alert"></app-icon><span>{{ error }} <a routerLink="/cart">Review your cart</a></span>
+      </div>
+
+      <section class="card">
+        <h2 class="panel-title">1. Delivery address</h2>
+        <div class="field">
+          <label for="addr">Full address <span class="req" aria-hidden="true">*</span></label>
+          <textarea id="addr" formControlName="shippingAddress" autocomplete="street-address" rows="3"
+            [class.invalid]="address.invalid && address.touched" [attr.aria-invalid]="address.invalid && address.touched"
+            aria-describedby="addr-hint addr-err"></textarea>
+          <span id="addr-hint" class="hint">House number, street, barangay, city and postal code.</span>
+          <span id="addr-err" class="error" *ngIf="address.invalid && address.touched" role="alert">
+            <app-icon name="alert" [size]="14"></app-icon>Enter the full delivery address (at least 10 characters).
+          </span>
+        </div>
+      </section>
+
+      <fieldset class="card pay">
+        <legend class="panel-title">2. Payment method</legend>
+        <label class="method" *ngFor="let m of methods" [class.on]="form.value.method === m.value">
+          <input type="radio" formControlName="method" [value]="m.value">
+          <span><strong>{{ m.label }}</strong><br><span class="small muted">{{ m.note }}</span></span>
+        </label>
+      </fieldset>
+
+      <button type="submit" class="btn" [disabled]="submitting">
+        {{ submitting ? 'Placing order…' : 'Place order' }}
+      </button>
+    </form>
+
+    <aside class="card summary" aria-labelledby="s-title">
+      <h2 id="s-title" class="panel-title">Your order</h2>
+      <ul>
+        <li *ngFor="let l of cart.lines$ | async">
+          <span>{{ l.quantity }} × {{ l.productName }} <span class="muted">({{ l.size }})</span></span>
+          <span class="num">{{ l.price * l.quantity | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</span>
+        </li>
+      </ul>
+      <p class="total"><span>Total</span><strong class="num">{{ cart.total$ | async | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</strong></p>
+      <p class="small muted">Stock is held for you as soon as you place the order.</p>
+    </aside>
+  </div>
+</div>

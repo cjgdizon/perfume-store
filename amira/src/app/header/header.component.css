@@ -1,0 +1,19 @@
+.bar { position: sticky; top: 0; z-index: 50; background: rgba(250, 250, 249, .96); border-bottom: 1px solid var(--border); }
+.inner { display: flex; align-items: center; gap: 8px; min-height: 68px; flex-wrap: wrap; }
+.brand { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1; text-decoration: none; color: var(--ink); padding: 8px 0; margin-right: auto; }
+.brand-main { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.brand-sub { font-size: .625rem; letter-spacing: .5em; text-transform: uppercase; color: var(--accent-ink); font-weight: 600; margin-top: 2px; }
+.actions { display: flex; align-items: center; gap: 4px; }
+.signin { font-size: .8125rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-decoration: none; padding: 0 12px; min-height: 44px; display: inline-flex; align-items: center; }
+.signin:hover { color: var(--accent-ink); }
+.count { position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--accent); color: #fff; font-size: .6875rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.toggle { display: inline-flex; }
+.nav { display: none; flex-basis: 100%; order: 5; border-top: 1px solid var(--border); }
+.nav.open { display: block; }
+@media (min-width: 900px) {
+  .toggle { display: none; }
+  .nav { display: block; flex-basis: auto; order: 0; border-top: 0; margin-right: 16px; }
+  .brand { margin-right: 32px; }
+  .inner { flex-wrap: nowrap; }
+  .nav { margin-right: auto; }
+}

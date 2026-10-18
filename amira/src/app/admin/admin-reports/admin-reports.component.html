@@ -1,0 +1,74 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Owner area</span>
+    <h1>Reports</h1>
+    <p class="muted">What is selling, what is not, and what the stock is worth. Only paid, non-cancelled orders count as sales.</p>
+  </div>
+  <app-admin-nav></app-admin-nav>
+
+  <div class="notice error" role="alert" *ngIf="failed"><app-icon name="alert"></app-icon><span>Some reports could not be loaded. Check that the server is running, then refresh.</span></div>
+
+  <div class="stack">
+    <section class="card" aria-labelledby="val-h" *ngIf="valuation">
+      <h2 id="val-h" class="h">Inventory valuation</h2>
+      <div class="grid cols-3 vals">
+        <div><p class="panel-title">Units on hand</p><p class="big num">{{ valuation.totalUnits | number }}</p></div>
+        <div><p class="panel-title">Worth at cost</p><p class="big num">{{ valuation.costValue | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p></div>
+        <div><p class="panel-title">Worth at retail</p><p class="big num">{{ valuation.retailValue | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="best-h">
+      <h2 id="best-h" class="h">Best sellers</h2>
+      <form class="row range" (ngSubmit)="loadBest()">
+        <div class="field"><label for="from">From</label><input id="from" type="date" name="from" [(ngModel)]="from"></div>
+        <div class="field"><label for="to">To</label><input id="to" type="date" name="to" [(ngModel)]="to"></div>
+        <div class="field"><button type="submit" class="btn secondary">Update</button></div>
+      </form>
+      <p class="muted" *ngIf="!best.length">No paid sales in this period.</p>
+      <div class="table-wrap" *ngIf="best.length">
+        <table>
+          <caption class="sr-only">Best selling perfumes and sizes</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">Perfume</th><th scope="col">Size</th><th scope="col" class="right">Units sold</th><th scope="col" class="right">Revenue</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let b of best; let i = index"><td class="num">{{ i + 1 }}</td><td>{{ b.productName }}</td><td>{{ b.size }}</td><td class="right num">{{ b.unitsSold }}</td><td class="right num">{{ b.revenue | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="cat-h">
+      <h2 id="cat-h" class="h">Revenue by category</h2>
+      <p class="muted" *ngIf="!revenue.length">No paid sales yet.</p>
+      <ul class="bars" *ngIf="revenue.length">
+        <li *ngFor="let r of revenue">
+          <span class="lbl">{{ r.category }}</span>
+          <span class="track"><span class="fill" [style.width.%]="(r.revenue / maxRevenue) * 100"></span></span>
+          <span class="val num">{{ r.revenue | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card" aria-labelledby="slow-h">
+      <h2 id="slow-h" class="h">Slow-moving stock</h2>
+      <form class="row range" (ngSubmit)="loadSlow()">
+        <div class="field"><label for="months">Not sold in the last</label>
+          <select id="months" name="months" [(ngModel)]="months" (ngModelChange)="loadSlow()"><option [ngValue]="1">1 month</option><option [ngValue]="3">3 months</option><option [ngValue]="6">6 months</option><option [ngValue]="12">12 months</option></select></div>
+      </form>
+      <p class="small muted num" *ngIf="slow.length">{{ slow.length }} sizes with {{ tiedUp | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }} of stock at cost sitting unsold.</p>
+      <p class="muted" *ngIf="!slow.length">Everything on the shelf has sold recently.</p>
+      <div class="table-wrap" *ngIf="slow.length">
+        <table>
+          <caption class="sr-only">Stock with no recent sales</caption>
+          <thead><tr><th scope="col">Perfume</th><th scope="col">Size</th><th scope="col">Batch</th><th scope="col">Expires</th><th scope="col" class="right">On hand</th><th scope="col" class="right">Cost value</th><th scope="col">Status</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let l of slow">
+              <td>{{ l.productName }}</td><td>{{ l.size }}</td><td>{{ l.batchNumber }}</td><td>{{ monthYear(l.expiryDate) }}</td>
+              <td class="right num">{{ l.stockQuantity }}</td><td class="right num">{{ l.costValue | number: '1.0-0' }}</td><td><app-status [status]="l.status"></app-status></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

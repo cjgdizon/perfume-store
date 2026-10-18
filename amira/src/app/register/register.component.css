@@ -1,0 +1,4 @@
+.narrow { max-width: 620px; }
+.center { text-align: center; margin: 0 auto; }
+/* breathing room between the Create account button and the sign-in link */
+.btn + .center { margin-top: 24px; }

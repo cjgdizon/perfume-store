@@ -1,0 +1,120 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Owner area</span>
+    <h1>Catalog</h1>
+  </div>
+  <app-admin-nav></app-admin-nav>
+
+  <!-- list -->
+  <ng-container *ngIf="!editing">
+    <div class="row between bar">
+      <p class="muted num" *ngIf="!loading && !failed">{{ products.length }} perfumes</p>
+      <button type="button" class="btn" (click)="startNew()"><app-icon name="plus" [size]="16"></app-icon>Add perfume</button>
+    </div>
+    <div class="skeleton" style="height: 240px" *ngIf="loading" aria-busy="true"></div>
+    <div class="notice error" role="alert" *ngIf="failed"><app-icon name="alert"></app-icon><span>We could not load the catalog. <button type="button" class="link-btn" (click)="load()">Try again</button></span></div>
+    <div class="empty" *ngIf="!loading && !failed && !products.length">
+      <h3>No perfumes yet</h3><p>Add your first perfume, then add each bottle size with its batch and expiry date.</p>
+    </div>
+    <div class="table-wrap" *ngIf="products.length">
+      <table>
+        <caption class="sr-only">All perfumes</caption>
+        <thead><tr><th scope="col">Perfume</th><th scope="col">Brand</th><th scope="col">Category</th><th scope="col" class="right">Sizes</th><th scope="col" class="right">Units</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+        <tbody>
+          <tr *ngFor="let p of products">
+            <td><strong>{{ p.name }}</strong></td>
+            <td>{{ p.brand }}</td>
+            <td>{{ p.category }}</td>
+            <td class="right num">{{ p.variants.length }}</td>
+            <td class="right num">{{ p.variants | stockSum }}</td>
+            <td class="right"><button type="button" class="btn secondary small" (click)="edit(p)">Edit<span class="sr-only"> {{ p.name }}</span></button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <!-- editor -->
+  <ng-container *ngIf="editing">
+    <button type="button" class="link-btn back" (click)="back()">&larr; All perfumes</button>
+    <h2>{{ editing.id ? editing.name : 'New perfume' }}</h2>
+
+    <div class="notice error" role="alert" *ngIf="error"><app-icon name="alert"></app-icon><span>{{ error }}</span></div>
+
+    <form class="card" [formGroup]="productForm" (ngSubmit)="saveProduct()" novalidate>
+      <h3 class="panel-title">Perfume details</h3>
+      <div class="form-grid">
+        <div class="field">
+          <label for="p-name">Name <span class="req" aria-hidden="true">*</span></label>
+          <input id="p-name" type="text" formControlName="name" [class.invalid]="bad('productForm', 'name')">
+          <span class="error" role="alert" *ngIf="bad('productForm', 'name')"><app-icon name="alert" [size]="14"></app-icon>Enter the perfume name.</span>
+        </div>
+        <div class="field"><label for="p-brand">Brand</label><input id="p-brand" type="text" formControlName="brand"></div>
+        <div class="field">
+          <label for="p-cat">Category <span class="req" aria-hidden="true">*</span></label>
+          <select id="p-cat" formControlName="category"><option *ngFor="let c of categories" [value]="c">{{ c }}</option></select>
+        </div>
+      </div>
+      <div class="field"><label for="p-desc">Description (notes, story, how to use)</label><textarea id="p-desc" formControlName="description" rows="3"></textarea></div>
+      <div class="row">
+        <button type="submit" class="btn" [disabled]="saving">{{ saving ? 'Saving…' : (editing.id ? 'Save perfume' : 'Create perfume') }}</button>
+        <button type="button" class="btn danger" *ngIf="editing.id" (click)="deleteProduct(editing)">Delete perfume</button>
+      </div>
+    </form>
+
+    <section class="sizes" *ngIf="editing.id" aria-labelledby="sizes-h">
+      <div class="row between">
+        <h3 id="sizes-h">Sizes and stock</h3>
+        <button type="button" class="btn secondary" *ngIf="variantId === null" (click)="newVariant()"><app-icon name="plus" [size]="16"></app-icon>Add size</button>
+      </div>
+
+      <form class="card vform" *ngIf="variantId !== null" [formGroup]="variantForm" (ngSubmit)="saveVariant()" novalidate>
+        <h4 class="panel-title">{{ variantId ? 'Edit size' : 'New size' }}</h4>
+        <div class="form-grid">
+          <div class="field"><label for="v-size">Size <span class="req" aria-hidden="true">*</span></label>
+            <input id="v-size" type="text" formControlName="size" placeholder="e.g. 50ml" [class.invalid]="bad('variantForm', 'size')">
+            <span class="error" role="alert" *ngIf="bad('variantForm', 'size')"><app-icon name="alert" [size]="14"></app-icon>Enter the bottle size.</span></div>
+          <div class="field"><label for="v-sku">SKU</label><input id="v-sku" type="text" formControlName="sku" aria-describedby="sku-h"><span id="sku-h" class="hint">Left empty, one is generated.</span></div>
+          <div class="field"><label for="v-price">Selling price (PHP) <span class="req" aria-hidden="true">*</span></label>
+            <input id="v-price" type="number" step="0.01" min="0" formControlName="price" [class.invalid]="bad('variantForm', 'price')">
+            <span class="error" role="alert" *ngIf="bad('variantForm', 'price')"><app-icon name="alert" [size]="14"></app-icon>Price must be above zero.</span></div>
+          <div class="field"><label for="v-cost">Cost price (PHP)</label><input id="v-cost" type="number" step="0.01" min="0" formControlName="costPrice"></div>
+          <div class="field" *ngIf="!variantId"><label for="v-stock">Units on hand</label><input id="v-stock" type="number" min="0" step="1" formControlName="stockQuantity"></div>
+          <div class="field"><label for="v-batch">Batch number</label><input id="v-batch" type="text" formControlName="batchNumber"></div>
+          <div class="field"><label for="v-mfg">Manufactured</label><input id="v-mfg" type="date" formControlName="manufactureDate"></div>
+          <div class="field"><label for="v-exp">Expires</label><input id="v-exp" type="date" formControlName="expiryDate"></div>
+        </div>
+        <p class="small muted" *ngIf="variantId">To change the units on hand, use the Inventory page so the count is recorded properly.</p>
+        <div class="row">
+          <button type="submit" class="btn" [disabled]="saving">{{ saving ? 'Saving…' : 'Save size' }}</button>
+          <button type="button" class="btn secondary" (click)="variantId = null">Cancel</button>
+        </div>
+      </form>
+
+      <div class="empty" *ngIf="!editing.variants.length && variantId === null"><h3>No sizes yet</h3><p>A perfume can only be sold once it has at least one size with a price.</p></div>
+      <div class="table-wrap" *ngIf="editing.variants.length">
+        <table>
+          <caption class="sr-only">Sizes of {{ editing.name }}</caption>
+          <thead><tr><th scope="col">Size</th><th scope="col" class="right">Price</th><th scope="col" class="right">Cost</th><th scope="col" class="right">On hand</th><th scope="col" class="right">Reserved</th><th scope="col">Batch</th><th scope="col">Expires</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let v of editing.variants">
+              <td><strong>{{ v.size }}</strong><br><span class="small muted">{{ v.sku }}</span></td>
+              <td class="right num">{{ v.price | number: '1.2-2' }}</td>
+              <td class="right num">{{ v.costPrice | number: '1.2-2' }}</td>
+              <td class="right num">{{ v.stockQuantity }}</td>
+              <td class="right num">{{ v.reservedQuantity }}</td>
+              <td>{{ v.batchNumber }}</td>
+              <td>{{ monthYear(v.expiryDate) }}</td>
+              <td><app-status [status]="v.status"></app-status></td>
+              <td class="right acts">
+                <button type="button" class="icon-btn" (click)="editVariant(v)" [attr.aria-label]="'Edit ' + v.size"><app-icon name="edit" [size]="18"></app-icon></button>
+                <button type="button" class="btn secondary small" *ngIf="v.status !== 'Discontinued'" (click)="discontinue(v)">Take off sale</button>
+                <button type="button" class="icon-btn" (click)="deleteVariant(v)" [attr.aria-label]="'Delete ' + v.size"><app-icon name="trash" [size]="18"></app-icon></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </ng-container>
+</div>

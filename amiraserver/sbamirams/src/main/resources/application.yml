@@ -1,0 +1,32 @@
+server:
+   port: 8080
+spring:
+   datasource:
+      url: jdbc:mysql://localhost:3306/amiradb?allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Manila
+      username: ${DB_USERNAME:root}
+      # set DB_PASSWORD in your environment, or put overrides in application-local.yml (git-ignored)
+      password: ${DB_PASSWORD:root}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+   jpa:
+      show-sql: false
+      hibernate:
+         ddl-auto: update
+         naming:
+            physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+amira:
+   # where reset links point; must match the address the Angular app is served from
+   frontend-url: http://localhost:4200
+   mail:
+      from: no-reply@amira.ph
+   cors:
+      origins: http://localhost:4200
+   seed:
+      # fills an EMPTY product table with 19 starter perfumes; set false (or AMIRA_SEED_DEMO_PRODUCTS=false) to start with none
+      demo-products: true
+      owner-email: owner@amira.ph
+      # development default only; set OWNER_PASSWORD for anything shared
+      owner-password: ${OWNER_PASSWORD:owner123}
+logging:
+   level:
+      com:
+         amira: INFO

@@ -1,0 +1,32 @@
+<header class="bar">
+  <div class="container inner">
+    <a routerLink="/" class="brand" aria-label="AMIRA, home">
+      <span class="brand-main">Amira</span><span class="brand-sub">Perfumes</span>
+    </a>
+
+    <button type="button" class="icon-btn toggle" [attr.aria-expanded]="menuOpen" aria-controls="site-nav"
+      [attr.aria-label]="menuOpen ? 'Close menu' : 'Open menu'" (click)="menuOpen = !menuOpen">
+      <app-icon [name]="menuOpen ? 'close' : 'menu'" [size]="22"></app-icon>
+    </button>
+
+    <app-menu-bar id="site-nav" class="nav" [class.open]="menuOpen" (navigate)="menuOpen = false"></app-menu-bar>
+
+    <div class="actions">
+      <ng-container *ngIf="auth.customer$ | async as me; else guest">
+        <a routerLink="/account" class="icon-btn" [attr.aria-label]="'Account: ' + me.name">
+          <app-icon name="user"></app-icon>
+        </a>
+        <button type="button" class="icon-btn" aria-label="Sign out" (click)="signOut()">
+          <app-icon name="logout"></app-icon>
+        </button>
+      </ng-container>
+      <ng-template #guest>
+        <a routerLink="/login" class="signin">Sign in</a>
+      </ng-template>
+      <a routerLink="/cart" class="icon-btn" [attr.aria-label]="'Cart, ' + ((cart.count$ | async) || 0) + ' items'">
+        <app-icon name="cart"></app-icon>
+        <span class="count num" *ngIf="(cart.count$ | async) as n" aria-hidden="true">{{ n }}</span>
+      </a>
+    </div>
+  </div>
+</header>

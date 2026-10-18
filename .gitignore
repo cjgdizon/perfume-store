@@ -1,0 +1,11 @@
+target/
+node_modules/
+dist/
+.angular/
+.idea/
+*.log
+application-local.yml
+
+uploads/
+
+.env

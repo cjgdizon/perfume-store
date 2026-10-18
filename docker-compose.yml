@@ -1,0 +1,50 @@
+# AMIRA web stack: MySQL + Spring Boot backend + Angular (nginx).
+#   docker compose up --build
+# then open http://localhost:4200
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: amira-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-amira_root_pw}
+      MYSQL_DATABASE: amiradb
+    volumes:
+      - amira-db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  backend:
+    build: ./amiraserver
+    container_name: amira-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/amiradb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Manila
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-amira_root_pw}
+      OWNER_PASSWORD: ${OWNER_PASSWORD:-owner123}
+      # fills an empty shop with 19 starter perfumes; remove to start with no products
+      AMIRA_SEED_DEMO_PRODUCTS: "true"
+      # the browser calls the backend directly, so these use the published ports
+      AMIRA_CORS_ORIGINS: http://localhost:4200
+      AMIRA_FRONTEND_URL: http://localhost:4200
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
+  frontend:
+    build: ./amira
+    container_name: amira-frontend
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    restart: unless-stopped
+
+volumes:
+  amira-db:

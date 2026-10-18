@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "59a4a8ed-fdeb-4229-9585-c4b25c53b73e",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "C:\\Users\\Cj\\Documents\\SilverScent-perfume\\.archify\\architecture-amira-20261007-011658\\candidate.json",
+  "output": "C:\\Users\\Cj\\Documents\\SilverScent-perfume\\.archify\\architecture-amira-20261007-011658\\amira-architecture.html",
+  "specification": {
+    "sha256": "c19973939831ed436bb4c5822bfc956f9af9e0dffd25cf433e35519cf9dbacdc",
+    "bytes": 5247
+  },
+  "artifact": {
+    "sha256": "5da5d55550cce67a2ad38e89d5602e049736c808b956f0b6df66f129cbe73699",
+    "bytes": 763985
+  }
+}

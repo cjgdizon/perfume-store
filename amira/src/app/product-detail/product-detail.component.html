@@ -1,0 +1,60 @@
+<div class="container page">
+  <nav aria-label="Breadcrumb" class="crumbs small">
+    <a routerLink="/products">Perfumes</a><span aria-hidden="true"> / </span><span aria-current="page">{{ product?.name || 'Perfume' }}</span>
+  </nav>
+
+  <div class="skeleton" style="height: 420px" *ngIf="loading" aria-busy="true" aria-label="Loading perfume"></div>
+
+  <div class="empty" *ngIf="notFound">
+    <h3>We could not find that perfume</h3>
+    <p>It may have been removed from the catalog.</p>
+    <a routerLink="/products" class="btn">Back to perfumes</a>
+  </div>
+  <div class="notice error" role="alert" *ngIf="failed">
+    <app-icon name="alert"></app-icon><span>We could not load this perfume. Check that the server is running, then refresh.</span>
+  </div>
+
+  <div class="layout" *ngIf="product">
+    <div class="art"><app-bottle [category]="product.category" [label]="product.name" [imageUrl]="product.imageUrl"></app-bottle></div>
+
+    <div>
+      <span class="eyebrow">{{ product.brand }} · {{ product.category }}</span>
+      <h1>{{ product.name }}</h1>
+      <p class="desc">{{ product.description }}</p>
+
+      <fieldset class="field sizes" *ngIf="product.variants.length; else novariants">
+        <legend>Size</legend>
+        <div class="size-grid">
+          <label class="size" *ngFor="let v of product.variants" [class.on]="selected?.id === v.id" [class.off]="!isSellable(v)">
+            <input type="radio" name="size" [value]="v.id" [checked]="selected?.id === v.id" [disabled]="!isSellable(v)" (change)="choose(v)">
+            <span class="sz">{{ v.size }}</span>
+            <span class="pr num">{{ v.price | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</span>
+            <span class="st small"><app-status [status]="label(v)"></app-status></span>
+          </label>
+        </div>
+      </fieldset>
+      <ng-template #novariants><p class="notice warn"><app-icon name="alert"></app-icon>No sizes are on sale for this perfume yet.</p></ng-template>
+
+      <div class="card facts" *ngIf="selected">
+        <p class="panel-title">This bottle</p>
+        <dl>
+          <div><dt>Batch</dt><dd>{{ selected.batchNumber || 'not stated' }}</dd></div>
+          <div><dt>Best before</dt><dd>{{ monthYear(selected.expiryDate) }}</dd></div>
+          <div><dt>In stock</dt><dd class="num">{{ selected.availableQuantity }}
+            <app-status *ngIf="selected.status === 'LowStock'" status="LowStock"></app-status></dd></div>
+        </dl>
+      </div>
+
+      <div class="buy" *ngIf="selected">
+        <div class="stepper" role="group" aria-label="Quantity">
+          <button type="button" class="icon-btn" aria-label="Decrease quantity" [disabled]="quantity <= 1" (click)="step(-1)"><span aria-hidden="true">−</span></button>
+          <output class="num" aria-live="polite">{{ quantity }}</output>
+          <button type="button" class="icon-btn" aria-label="Increase quantity" [disabled]="quantity >= selected.availableQuantity" (click)="step(1)"><span aria-hidden="true">+</span></button>
+        </div>
+        <button type="button" class="btn" (click)="addToCart(false)">Add to cart</button>
+        <button type="button" class="btn secondary" (click)="addToCart(true)">Buy now</button>
+      </div>
+      <p class="small muted total num" *ngIf="selected">Subtotal {{ selected.price * quantity | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</p>
+    </div>
+  </div>
+</div>

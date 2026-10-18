@@ -1,0 +1,28 @@
+.crumbs { margin-bottom: 24px; color: var(--muted-fg); }
+.layout { display: grid; gap: 32px; }
+.art { border: 1px solid var(--border); background: #fff; max-width: 460px; width: 100%; }
+.desc { color: var(--ink-2); font-size: 1.0625rem; }
+fieldset { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+.size-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-top: 8px; }
+.size { position: relative; display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border: 1px solid var(--muted-fg); border-radius: var(--radius); background: var(--card); cursor: pointer; min-height: 44px; transition: border-color 180ms var(--ease), background-color 180ms var(--ease); }
+.size input { position: absolute; opacity: 0; inset: 0; cursor: pointer; margin: 0; }
+.size:hover { border-color: var(--ink); }
+.size.on { border: 2px solid var(--ink); padding: 11px 15px; background: #f7f5f2; }
+.size:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.size.off { opacity: .6; cursor: not-allowed; background: var(--muted); }
+.size.off input { cursor: not-allowed; }
+.sz { font-family: var(--font-display); font-size: 1.375rem; font-weight: 600; }
+.pr { font-weight: 600; }
+.facts { padding: 16px 20px; margin-bottom: 20px; }
+dl { margin: 0; display: grid; gap: 8px; }
+dl div { display: flex; justify-content: space-between; gap: 16px; }
+dt { color: var(--muted-fg); }
+dd { margin: 0; font-weight: 600; text-align: right; }
+.buy { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--muted-fg); border-radius: var(--radius); background: var(--card); }
+.stepper output { min-width: 40px; text-align: center; font-weight: 600; }
+.stepper .icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+.total { margin-top: 12px; }
+@media (min-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 64px; align-items: start; }
+}

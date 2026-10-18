@@ -1,0 +1,6 @@
+<div class="stage photo" *ngIf="photo && !broken">
+  <img [src]="photo" [alt]="label ? label + ' bottle' : 'Perfume bottle'" (error)="broken = true" loading="lazy">
+</div>
+<div class="stage" *ngIf="!photo || broken" [class]="'stage ' + key">
+  <img [src]="'assets/bottles/bottle-' + key + '.svg'" [alt]="label ? label + ' bottle' : 'Perfume bottle'" width="200" height="240">
+</div>

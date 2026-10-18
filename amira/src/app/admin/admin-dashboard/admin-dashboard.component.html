@@ -1,0 +1,58 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Owner area</span>
+    <h1>Overview</h1>
+  </div>
+  <app-admin-nav></app-admin-nav>
+
+  <div class="grid cols-4" *ngIf="loading" aria-busy="true"><div class="skeleton" style="height: 110px" *ngFor="let n of [1, 2, 3, 4]"></div></div>
+  <div class="notice error" role="alert" *ngIf="failed"><app-icon name="alert"></app-icon><span>We could not load the dashboard. Check that the server is running, then refresh.</span></div>
+
+  <ng-container *ngIf="!loading && !failed && valuation">
+    <section aria-label="Key numbers" class="grid cols-4 kpis">
+      <div class="card kpi"><p class="panel-title">Units on hand</p><p class="big num">{{ valuation.totalUnits | number }}</p></div>
+      <div class="card kpi"><p class="panel-title">Stock value at cost</p><p class="big num">{{ valuation.costValue | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p></div>
+      <div class="card kpi"><p class="panel-title">Stock value at retail</p><p class="big num">{{ valuation.retailValue | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p></div>
+      <a class="card kpi link" routerLink="/admin/orders"><p class="panel-title">Orders needing action</p><p class="big num">{{ toConfirm + toShip }}</p><p class="small muted">{{ toConfirm }} awaiting payment, {{ toShip }} to ship</p></a>
+    </section>
+
+    <div class="grid cols-2 lists">
+      <section aria-labelledby="exp-h">
+        <div class="row between"><h2 id="exp-h" class="h">Expiring within {{ days }} days</h2><a routerLink="/admin/inventory" class="link-btn small">Full stock report</a></div>
+        <div class="empty small" *ngIf="!expiring.length"><p>Nothing is close to expiry.</p></div>
+        <div class="table-wrap" *ngIf="expiring.length">
+          <table>
+            <caption class="sr-only">Variants expiring soon or already expired</caption>
+            <thead><tr><th scope="col">Perfume</th><th scope="col">Batch</th><th scope="col">Expiry</th><th scope="col" class="right">On hand</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let v of expiring">
+                <td>{{ v.productName }} <span class="muted">{{ v.size }}</span></td>
+                <td>{{ v.batchNumber }}</td>
+                <td>{{ monthYear(v.expiryDate) }} <app-status *ngIf="v.status === 'Expired'" status="Expired"></app-status></td>
+                <td class="right num">{{ v.stockQuantity }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section aria-labelledby="low-h">
+        <div class="row between"><h2 id="low-h" class="h">Low stock (≤ {{ threshold }} available)</h2><a routerLink="/admin/inventory" class="link-btn small">Adjust stock</a></div>
+        <div class="empty small" *ngIf="!lowStock.length"><p>Every variant has enough stock.</p></div>
+        <div class="table-wrap" *ngIf="lowStock.length">
+          <table>
+            <caption class="sr-only">Variants running low</caption>
+            <thead><tr><th scope="col">Perfume</th><th scope="col" class="right">Available</th><th scope="col" class="right">Reserved</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let v of lowStock">
+                <td>{{ v.productName }} <span class="muted">{{ v.size }}</span></td>
+                <td class="right num">{{ v.availableQuantity }}</td>
+                <td class="right num">{{ v.reservedQuantity }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </ng-container>
+</div>

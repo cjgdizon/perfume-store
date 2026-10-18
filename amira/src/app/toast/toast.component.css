@@ -1,0 +1,7 @@
+.region { position: fixed; z-index: 1000; right: 16px; bottom: 16px; left: 16px; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; pointer-events: none; }
+.toast { pointer-events: auto; display: flex; align-items: center; gap: 12px; max-width: 420px; padding: 8px 4px 8px 16px; background: #1c1917; color: #fff; border-radius: 4px; box-shadow: 0 8px 24px rgba(28, 25, 23, .25); animation: in 220ms cubic-bezier(.2, 0, 0, 1); }
+.toast.error { background: #7f1d1d; }
+.msg { flex: 1; font-size: .875rem; line-height: 1.4; }
+.close { color: #fff; min-width: 36px; min-height: 36px; }
+.close:hover { background: rgba(255, 255, 255, .15); color: #fff; }
+@keyframes in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

@@ -1,0 +1,9 @@
+.narrow { max-width: 520px; }
+.notice { margin-bottom: 16px; }
+.pw { display: flex; align-items: center; gap: 12px; }
+.center { text-align: center; margin: 0 auto; }
+/* breathing room between the Sign in button and the register link */
+.btn + .center { margin-top: 24px; }
+/* sits under the password field, with a comfortable tap height */
+.forgot { margin: -8px 0 0 !important; text-align: center; max-width: none; }
+.forgot a { display: inline-flex; align-items: center; min-height: 44px; }

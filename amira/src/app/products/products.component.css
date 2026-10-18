@@ -1,0 +1,7 @@
+.filters { display: flex; flex-wrap: wrap; gap: 8px 32px; align-items: flex-end; margin-bottom: 8px; }
+.grow { flex: 1 1 280px; max-width: 480px; }
+.label { font-size: .8125rem; font-weight: 600; letter-spacing: .04em; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 44px; padding: 0 20px; border: 1px solid var(--muted-fg); border-radius: 999px; background: var(--card); color: var(--ink); font: 500 .875rem var(--font-body); cursor: pointer; transition: background-color 180ms var(--ease), color 180ms var(--ease); }
+.chip:hover { border-color: var(--ink); }
+.chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }

@@ -1,0 +1,22 @@
+<ul class="lines" aria-label="Items in your cart">
+  <li class="line" *ngFor="let l of cart.lines$ | async">
+    <div class="thumb"><app-bottle [category]="l.category" [label]="l.productName" [imageUrl]="l.imageUrl"></app-bottle></div>
+    <div class="info">
+      <p class="brand">{{ l.brand }}</p>
+      <h3><a [routerLink]="['/products', l.productId]">{{ l.productName }}</a></h3>
+      <p class="small muted">{{ l.size }} · <span class="num">{{ l.price | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</span> each</p>
+      <button type="button" class="link-btn small" (click)="cart.remove(l.variantId)">
+        Remove<span class="sr-only"> {{ l.productName }} {{ l.size }}</span>
+      </button>
+    </div>
+    <div class="qty">
+      <div class="stepper" role="group" [attr.aria-label]="'Quantity for ' + l.productName + ' ' + l.size">
+        <button type="button" class="icon-btn" aria-label="Decrease quantity" [disabled]="l.quantity <= 1" (click)="cart.setQuantity(l.variantId, l.quantity - 1)"><span aria-hidden="true">−</span></button>
+        <output class="num">{{ l.quantity }}</output>
+        <button type="button" class="icon-btn" aria-label="Increase quantity" [disabled]="l.quantity >= l.maxQuantity" (click)="cart.setQuantity(l.variantId, l.quantity + 1)"><span aria-hidden="true">+</span></button>
+      </div>
+      <p class="small muted" *ngIf="l.quantity >= l.maxQuantity">Only {{ l.maxQuantity }} in stock</p>
+    </div>
+    <p class="sub num">{{ l.price * l.quantity | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</p>
+  </li>
+</ul>

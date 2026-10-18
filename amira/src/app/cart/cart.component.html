@@ -1,0 +1,29 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Your selection</span>
+    <h1>Cart</h1>
+  </div>
+
+  <ng-container *ngIf="cart.lines$ | async as lines">
+    <div class="empty" *ngIf="!lines.length">
+      <h3>Your cart is empty</h3>
+      <p>Choose a perfume and a size, and it will wait for you here.</p>
+      <a routerLink="/products" class="btn">Browse perfumes</a>
+    </div>
+
+    <div class="layout" *ngIf="lines.length">
+      <app-cartitems></app-cartitems>
+
+      <aside class="card summary" aria-labelledby="sum-title">
+        <h2 id="sum-title" class="panel-title">Order summary</h2>
+        <dl>
+          <div><dt>Items</dt><dd class="num">{{ cart.count$ | async }}</dd></div>
+          <div class="total"><dt>Total</dt><dd class="num">{{ cart.total$ | async | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</dd></div>
+        </dl>
+        <p class="small muted">Delivery is arranged by the shop after you order. You pick the payment method on the next step.</p>
+        <a routerLink="/checkout" class="btn block">Checkout</a>
+        <a routerLink="/products" class="link-btn small">Keep shopping</a>
+      </aside>
+    </div>
+  </ng-container>
+</div>

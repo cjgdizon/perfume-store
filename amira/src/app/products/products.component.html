@@ -1,0 +1,40 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">The collection</span>
+    <h1>Perfumes</h1>
+  </div>
+
+  <div class="filters" role="search">
+    <div class="field grow">
+      <label for="q">Search by name, brand or notes</label>
+      <input id="q" type="search" [ngModel]="keyword" (ngModelChange)="onKeyword($event)" autocomplete="off" placeholder="Search perfumes">
+    </div>
+    <div class="field">
+      <span id="cat-label" class="label">Category</span>
+      <div class="chips" role="group" aria-labelledby="cat-label">
+        <button type="button" class="chip" *ngFor="let c of categories" [class.on]="category === c" [attr.aria-pressed]="category === c" (click)="pick(c)">{{ c }}</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="small muted num" aria-live="polite" *ngIf="!loading && !failed">{{ products.length }} {{ products.length === 1 ? 'perfume' : 'perfumes' }}</p>
+
+  <div class="grid cols-3" *ngIf="loading" aria-busy="true" aria-label="Loading perfumes">
+    <div class="skeleton" style="height: 380px" *ngFor="let n of [1, 2, 3]"></div>
+  </div>
+
+  <div class="notice error" role="alert" *ngIf="failed">
+    <app-icon name="alert"></app-icon>
+    <span>We could not load the perfumes. Check that the server is running, then try again.</span>
+  </div>
+
+  <div class="grid cols-3" *ngIf="!loading && !failed && products.length">
+    <app-product-card *ngFor="let p of products" [product]="p"></app-product-card>
+  </div>
+
+  <div class="empty" *ngIf="!loading && !failed && !products.length">
+    <h3>No perfumes match</h3>
+    <p>Try a different word, or clear the category filter.</p>
+    <button type="button" class="btn secondary" (click)="category = ''; onKeyword('')">Clear filters</button>
+  </div>
+</div>

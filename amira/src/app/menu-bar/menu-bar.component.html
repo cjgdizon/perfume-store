@@ -1,0 +1,10 @@
+<nav aria-label="Main">
+  <ul>
+    <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="navigate.emit()">Home</a></li>
+    <li><a routerLink="/products" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="navigate.emit()">Perfumes</a></li>
+    <ng-container *ngIf="auth.customer$ | async as me">
+      <li *ngIf="me.role === 'CUSTOMER'"><a routerLink="/orders" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="navigate.emit()">My orders</a></li>
+      <li *ngIf="me.role === 'OWNER'"><a routerLink="/admin" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="navigate.emit()">Owner dashboard</a></li>
+    </ng-container>
+  </ul>
+</nav>

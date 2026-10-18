@@ -1,0 +1,9 @@
+<div class="region" aria-live="polite" aria-atomic="false">
+  <div class="toast" *ngFor="let t of toasts.toasts$ | async" [class.error]="t.kind === 'error'" [attr.role]="t.kind === 'error' ? 'alert' : 'status'">
+    <app-icon [name]="t.kind === 'error' ? 'alert' : 'check'" [size]="18"></app-icon>
+    <span class="msg">{{ t.message }}</span>
+    <button type="button" class="icon-btn close" aria-label="Dismiss message" (click)="toasts.dismiss(t.id)">
+      <app-icon name="close" [size]="16"></app-icon>
+    </button>
+  </div>
+</div>

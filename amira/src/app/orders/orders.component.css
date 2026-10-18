@@ -1,0 +1,6 @@
+.order { display: flex; flex-direction: column; gap: 16px; }
+.oid { font-size: 1.5rem; margin: 0; }
+.order p { margin: 0; }
+.total { font-weight: 600; font-size: 1.125rem; }
+.field.inline { margin: 0; min-width: 200px; }
+.actions { padding-top: 4px; }

@@ -1,0 +1,62 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Owner area</span>
+    <h1>Inventory</h1>
+    <p class="muted">Every size, with its batch, expiry and count. Use “Set count” to match the system to what is on the shelf.</p>
+  </div>
+  <app-admin-nav></app-admin-nav>
+
+  <div class="filters">
+    <div class="field grow"><label for="s">Search perfume, brand, SKU or batch</label><input id="s" type="search" [(ngModel)]="search" autocomplete="off"></div>
+    <div class="field">
+      <label for="st">Status</label>
+      <select id="st" [(ngModel)]="status"><option value="">All</option><option *ngFor="let s of statuses" [value]="s">{{ s === 'LowStock' ? 'Low stock' : s }}</option></select>
+    </div>
+  </div>
+
+  <div class="skeleton" style="height: 280px" *ngIf="loading" aria-busy="true"></div>
+  <div class="notice error" role="alert" *ngIf="failed"><app-icon name="alert"></app-icon><span>We could not load the stock report. <button type="button" class="link-btn" (click)="load()">Try again</button></span></div>
+
+  <ng-container *ngIf="!loading && !failed">
+    <p class="small muted num" aria-live="polite">{{ shown.length }} sizes · stock value at cost {{ totalCost | currency: 'PHP' : 'symbol-narrow' : '1.0-0' }}</p>
+    <div class="empty" *ngIf="!shown.length"><h3>Nothing matches</h3><p>Change the search or status filter.</p></div>
+    <div class="table-wrap" *ngIf="shown.length">
+      <table>
+        <caption class="sr-only">Stock report</caption>
+        <thead><tr>
+          <th scope="col">Perfume</th><th scope="col">Size</th><th scope="col">Batch</th><th scope="col">Expires</th>
+          <th scope="col" class="right">On hand</th><th scope="col" class="right">Reserved</th><th scope="col" class="right">Available</th>
+          <th scope="col" class="right">Cost value</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Actions</span></th>
+        </tr></thead>
+        <tbody>
+          <tr *ngFor="let l of shown">
+            <td><strong>{{ l.productName }}</strong><br><span class="small muted">{{ l.brand }}</span></td>
+            <td>{{ l.size }}</td>
+            <td>{{ l.batchNumber }}</td>
+            <td>{{ monthYear(l.expiryDate) }}</td>
+            <td class="right num">
+              <ng-container *ngIf="counting !== l.variantId; else editor">{{ l.stockQuantity }}</ng-container>
+              <ng-template #editor>
+                <label [for]="'c' + l.variantId" class="sr-only">New count for {{ l.productName }} {{ l.size }}</label>
+                <input [id]="'c' + l.variantId" class="count" type="number" min="0" step="1" [(ngModel)]="count" (keydown.enter)="saveCount(l)" (keydown.escape)="counting = null">
+              </ng-template>
+            </td>
+            <td class="right num">{{ l.reservedQuantity }}</td>
+            <td class="right num">{{ l.availableQuantity }}</td>
+            <td class="right num">{{ l.costValue | number: '1.0-0' }}</td>
+            <td><app-status [status]="l.status"></app-status></td>
+            <td class="right acts">
+              <ng-container *ngIf="counting !== l.variantId; else save">
+                <button type="button" class="btn secondary small" (click)="startCount(l)">Set count<span class="sr-only"> for {{ l.productName }} {{ l.size }}</span></button>
+              </ng-container>
+              <ng-template #save>
+                <button type="button" class="btn small" [disabled]="saving" (click)="saveCount(l)">Save</button>
+                <button type="button" class="btn secondary small" (click)="counting = null">Cancel</button>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>

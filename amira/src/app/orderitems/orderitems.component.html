@@ -1,0 +1,17 @@
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Items in this order</caption>
+    <thead>
+      <tr><th scope="col">Perfume</th><th scope="col">Size</th><th scope="col" class="right">Qty</th><th scope="col" class="right">Price</th><th scope="col" class="right">Subtotal</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of items">
+        <td>{{ i.productName }}</td>
+        <td>{{ i.size }}</td>
+        <td class="right num">{{ i.quantity }}</td>
+        <td class="right num">{{ i.priceAtPurchase | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</td>
+        <td class="right num">{{ i.subtotal | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

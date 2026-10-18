@@ -1,0 +1,53 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Owner area</span>
+    <h1>Orders</h1>
+  </div>
+  <app-admin-nav></app-admin-nav>
+
+  <div class="field filter">
+    <label for="f">Show</label>
+    <select id="f" [(ngModel)]="filter"><option value="">All orders</option><option *ngFor="let s of statuses" [value]="s">{{ s }}</option></select>
+  </div>
+
+  <div class="skeleton" style="height: 240px" *ngIf="loading" aria-busy="true"></div>
+  <div class="notice error" role="alert" *ngIf="failed"><app-icon name="alert"></app-icon><span>We could not load the orders. <button type="button" class="link-btn" (click)="load()">Try again</button></span></div>
+  <div class="empty" *ngIf="!loading && !failed && !shown.length"><h3>No orders</h3><p>Orders appear here as customers place them.</p></div>
+
+  <div class="table-wrap" *ngIf="shown.length">
+    <table>
+      <caption class="sr-only">Customer orders</caption>
+      <thead><tr><th scope="col">Order</th><th scope="col">Customer</th><th scope="col">Placed</th><th scope="col" class="right">Total</th><th scope="col">Order</th><th scope="col">Payment</th><th scope="col"><span class="sr-only">Details</span></th></tr></thead>
+      <tbody>
+        <ng-container *ngFor="let o of shown">
+          <tr>
+            <td><strong>#{{ o.id }}</strong></td>
+            <td>{{ o.customerName }}</td>
+            <td>{{ o.dateOrdered | date: 'MMM d, h:mm a' }}</td>
+            <td class="right num">{{ o.totalAmount | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td><app-status [status]="o.statusName"></app-status></td>
+            <td><app-status [status]="o.paymentStatus"></app-status></td>
+            <td class="right"><button type="button" class="btn secondary small" [attr.aria-expanded]="open === o.id" (click)="toggle(o)">{{ open === o.id ? 'Hide' : 'Details' }}<span class="sr-only"> for order {{ o.id }}</span></button></td>
+          </tr>
+          <tr class="detail" *ngIf="open === o.id">
+            <td colspan="7">
+              <div class="d">
+                <app-orderitems [items]="o.items"></app-orderitems>
+                <p class="small muted">Deliver to: {{ o.shippingAddress }}</p>
+                <p class="small" *ngFor="let p of payments">Payment #{{ p.id }}: {{ p.method }}, {{ p.amount | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }} <app-status [status]="p.status"></app-status></p>
+                <div class="row">
+                  <button type="button" class="btn" *ngIf="o.statusName === 'Pending' && pendingPayment() as pp" [disabled]="busy" (click)="confirm(pp)">Confirm {{ pp.method }} payment</button>
+                  <button type="button" class="btn" *ngIf="o.statusName === 'Paid'" [disabled]="busy" (click)="advance(o, 'Shipped')"><app-icon name="truck" [size]="16"></app-icon>Mark shipped</button>
+                  <button type="button" class="btn" *ngIf="o.statusName === 'Shipped'" [disabled]="busy" (click)="advance(o, 'Delivered')"><app-icon name="check" [size]="16"></app-icon>Mark delivered</button>
+                  <button type="button" class="btn danger" *ngIf="o.statusName === 'Delivered' && completedPayment() as cp" [disabled]="busy" (click)="refund(cp)">Refund payment</button>
+                  <button type="button" class="btn danger" *ngIf="o.statusName === 'Pending' || o.statusName === 'Paid'" [disabled]="busy" (click)="cancel(o)">Cancel order</button>
+                </div>
+                <p class="small muted" *ngIf="o.statusName === 'Pending' && !pendingPayment()">The customer has not chosen a payment method yet.</p>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

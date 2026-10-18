@@ -1,0 +1,31 @@
+<div class="container page narrow">
+  <div class="page-head">
+    <span class="eyebrow">Your details</span>
+    <h1>Account</h1>
+    <p class="muted">Signed in as {{ auth.customer?.email }}</p>
+  </div>
+
+  <form class="card stack" [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="notice error" role="alert" *ngIf="error"><app-icon name="alert"></app-icon><span>{{ error }}</span></div>
+
+    <div class="field">
+      <label for="name">Full name <span class="req" aria-hidden="true">*</span></label>
+      <input id="name" type="text" formControlName="name" autocomplete="name" [class.invalid]="form.controls.name.invalid && form.controls.name.touched">
+      <span class="error" role="alert" *ngIf="form.controls.name.invalid && form.controls.name.touched"><app-icon name="alert" [size]="14"></app-icon>Enter your name.</span>
+    </div>
+    <div class="field">
+      <label for="phone">Mobile number</label>
+      <input id="phone" type="tel" formControlName="phone" autocomplete="tel" inputmode="tel">
+    </div>
+    <div class="field">
+      <label for="addr">Delivery address</label>
+      <textarea id="addr" formControlName="shippingAddress" rows="3" autocomplete="street-address"></textarea>
+    </div>
+    <div class="field">
+      <label for="pw">New password</label>
+      <input id="pw" type="password" formControlName="password" autocomplete="new-password" aria-describedby="pw-hint" [class.invalid]="form.controls.password.invalid">
+      <span id="pw-hint" class="hint">Leave empty to keep your current password. At least 6 characters.</span>
+    </div>
+    <button type="submit" class="btn" [disabled]="saving">{{ saving ? 'Saving…' : 'Save changes' }}</button>
+  </form>
+</div>

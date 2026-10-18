@@ -1,0 +1,13 @@
+.layout { display: grid; gap: 32px; align-items: start; }
+.summary { display: flex; flex-direction: column; gap: 12px; }
+.summary .panel-title { margin-bottom: 0; }
+dl { margin: 0; display: grid; gap: 8px; }
+dl div { display: flex; justify-content: space-between; }
+dt { color: var(--muted-fg); }
+dd { margin: 0; font-weight: 600; }
+.total { padding-top: 12px; border-top: 1px solid var(--border); font-size: 1.25rem; }
+.total dt { color: var(--ink); }
+@media (min-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 340px; }
+  .summary { position: sticky; top: 92px; }
+}

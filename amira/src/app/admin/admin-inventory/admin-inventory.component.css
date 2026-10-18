@@ -1,0 +1,5 @@
+.filters { display: flex; flex-wrap: wrap; gap: 0 24px; align-items: flex-end; }
+.grow { flex: 1 1 260px; max-width: 420px; }
+.count { width: 88px; text-align: right; }
+.acts { white-space: nowrap; }
+.acts .btn + .btn { margin-left: 4px; }

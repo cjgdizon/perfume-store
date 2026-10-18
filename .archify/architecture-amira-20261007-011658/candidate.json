@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AMIRA System Architecture",
+    "output": ".archify/architecture-amira-20261007-011658/amira-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "users",
+      "type": "external",
+      "label": "Shopper / Owner",
+      "sublabel": "Web browser",
+      "pos": [
+        30,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "spa",
+      "type": "frontend",
+      "label": "Angular 16 SPA",
+      "sublabel": "NgModule, port 4200",
+      "pos": [
+        265,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "ctrl",
+      "type": "backend",
+      "label": "REST Controllers",
+      "sublabel": "/api/resource",
+      "pos": [
+        500,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "advice",
+      "type": "backend",
+      "label": "Error Handler",
+      "sublabel": "ControllerAdvice",
+      "pos": [
+        500,
+        150
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth and Roles",
+      "sublabel": "BCrypt, customer/owner",
+      "pos": [
+        500,
+        450
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "svc",
+      "type": "backend",
+      "label": "Core Services",
+      "sublabel": "Product, Order, Payment",
+      "pos": [
+        735,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "transform",
+      "type": "backend",
+      "label": "Transform",
+      "sublabel": "entity to model",
+      "pos": [
+        735,
+        150
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "inv",
+      "type": "backend",
+      "label": "Inventory + Reports",
+      "sublabel": "reserve, deduct, stats",
+      "pos": [
+        735,
+        450
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "repo",
+      "type": "backend",
+      "label": "Repositories",
+      "sublabel": "Spring Data JPA",
+      "pos": [
+        970,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    },
+    {
+      "id": "db",
+      "type": "database",
+      "label": "MySQL 8",
+      "sublabel": "amiradb",
+      "pos": [
+        1205,
+        300
+      ],
+      "size": [
+        140,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Spring Boot 2.7, Java 17, port 8080",
+      "wraps": [
+        "ctrl",
+        "advice",
+        "auth",
+        "svc",
+        "transform",
+        "inv",
+        "repo"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "users-to-spa",
+      "from": "users",
+      "to": "spa",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "spa-to-ctrl",
+      "from": "spa",
+      "to": "ctrl",
+      "label": "REST JSON",
+      "variant": "emphasis"
+    },
+    {
+      "id": "ctrl-to-svc",
+      "from": "ctrl",
+      "to": "svc",
+      "label": "models"
+    },
+    {
+      "id": "svc-to-repo",
+      "from": "svc",
+      "to": "repo",
+      "label": "entities"
+    },
+    {
+      "id": "repo-to-db",
+      "from": "repo",
+      "to": "db",
+      "label": "SQL/JPA"
+    },
+    {
+      "id": "ctrl-to-advice",
+      "from": "ctrl",
+      "to": "advice",
+      "label": "on error",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "ctrl-to-auth",
+      "from": "ctrl",
+      "to": "auth",
+      "label": "authorize",
+      "variant": "security",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "svc-to-transform",
+      "from": "svc",
+      "to": "transform",
+      "label": "map",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "svc-to-inv",
+      "from": "svc",
+      "to": "inv",
+      "label": "stock rules",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "inv-to-repo",
+      "from": "inv",
+      "to": "repo",
+      "label": "stock, sales",
+      "fromSide": "right",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Backend modules",
+      "items": [
+        "amiradata: entities and repositories",
+        "amirabiz: models, services, transforms",
+        "sbamirams: controllers and app config"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Business rules",
+      "items": [
+        "Order checks and reserves stock before payment",
+        "Confirmed payment deducts stock; cancel restores it",
+        "Reports use variant batch, expiry and cost data"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Frontend",
+      "items": [
+        "Storefront: catalog, cart, checkout, orders",
+        "Owner area: catalog, stock, expiry, reports"
+      ]
+    }
+  ]
+}

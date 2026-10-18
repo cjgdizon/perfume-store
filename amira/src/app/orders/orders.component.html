@@ -1,0 +1,58 @@
+<div class="container page">
+  <div class="page-head">
+    <span class="eyebrow">Your purchases</span>
+    <h1>My orders</h1>
+  </div>
+
+  <div class="stack" *ngIf="loading" aria-busy="true" aria-label="Loading your orders">
+    <div class="skeleton" style="height: 160px" *ngFor="let n of [1, 2]"></div>
+  </div>
+  <div class="notice error" role="alert" *ngIf="failed">
+    <app-icon name="alert"></app-icon>
+    <span>We could not load your orders. <button type="button" class="link-btn" (click)="load()">Try again</button></span>
+  </div>
+
+  <div class="empty" *ngIf="!loading && !failed && !orders.length">
+    <h3>No orders yet</h3>
+    <p>When you place an order, you can follow it here from payment to delivery.</p>
+    <a routerLink="/products" class="btn">Browse perfumes</a>
+  </div>
+
+  <div class="stack" *ngIf="orders.length">
+    <article class="card order" *ngFor="let o of orders" [attr.aria-labelledby]="'o' + o.id">
+      <header class="row between">
+        <div>
+          <h2 [id]="'o' + o.id" class="oid">Order #{{ o.id }}</h2>
+          <p class="small muted">{{ o.dateOrdered | date: 'MMM d, y, h:mm a' }}</p>
+        </div>
+        <div class="row">
+          <app-status [status]="o.statusName"></app-status>
+          <app-status *ngIf="(o.paymentStatus === 'Unpaid' && waiting[o.id] ? 'Pending' : o.paymentStatus) !== o.statusName" [status]="o.paymentStatus === 'Unpaid' && waiting[o.id] ? 'Pending' : o.paymentStatus"></app-status>
+        </div>
+      </header>
+
+      <app-orderitems [items]="o.items"></app-orderitems>
+
+      <div class="row between foot">
+        <div>
+          <p class="small muted">Delivering to: {{ o.shippingAddress }}</p>
+          <p class="small muted" *ngIf="waiting[o.id] as w">Waiting for the shop to confirm your {{ w.method }} payment.</p>
+        </div>
+        <p class="total num">Total {{ o.totalAmount | currency: 'PHP' : 'symbol-narrow' : '1.2-2' }}</p>
+      </div>
+
+      <div class="row actions" *ngIf="canPay(o) || canCancel(o)">
+        <ng-container *ngIf="canPay(o)">
+          <div class="field inline">
+            <label [for]="'m' + o.id" class="sr-only">Payment method for order {{ o.id }}</label>
+            <select [id]="'m' + o.id" [ngModel]="payWith[o.id] || 'GCash'" (ngModelChange)="payWith[o.id] = $event">
+              <option *ngFor="let m of methods" [value]="m.value">{{ m.label }}</option>
+            </select>
+          </div>
+          <button type="button" class="btn" [disabled]="busy === o.id" (click)="pay(o)">Pay now</button>
+        </ng-container>
+        <button type="button" class="btn danger" *ngIf="canCancel(o)" [disabled]="busy === o.id" (click)="cancel(o)">Cancel order</button>
+      </div>
+    </article>
+  </div>
+</div>
